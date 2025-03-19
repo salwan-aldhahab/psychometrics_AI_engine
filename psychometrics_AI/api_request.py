@@ -2,7 +2,7 @@ import openai
 import json
 
 # Set your OpenAI API Key
-API_KEY = "replace-with-your-api-key"
+API_KEY = "add-your-api-key-here"
 
 # Initialize OpenAI client
 client = openai.OpenAI(api_key=API_KEY)

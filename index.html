@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Founder Psychometric Assessment</title>
+    <style>
+        :root {
+            --primary: #30889C;
+            --primary-dark: #054B5B;
+            --secondary: #6c757d;
+            --success: #59BACA;
+            --light: #ACDDE5;
+            --dark: #000000;
+            --background: #D6EEF2;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+        
+        .progress-container {
+            margin: 2rem 0;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .category {
+            display: inline-block;
+            background-color: rgba(74, 108, 247, 0.1);
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+        }
+        
+        .question {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+        
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .choice {
+            background-color: var(--light);
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .choice:hover {
+            border-color: var(--primary);
+            background-color: rgba(74, 108, 247, 0.05);
+        }
+        
+        .choice.selected {
+            border-color: var(--primary);
+            background-color: rgba(74, 108, 247, 0.1);
+        }
+        
+        .choice-text {
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: var(--white);
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            min-width: 150px;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            background-color: var(--secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+        
+        .results {
+            display: none;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .result-bar-container {
+            flex: 2;
+            height: 12px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 0 1rem;
+        }
+        
+        .result-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 6px;
+            transition: width 1s ease-in-out;
+        }
+        
+        .result-value {
+            font-weight: 600;
+            color: var(--primary);
+            width: 50px;
+            text-align: right;
+        }
+        
+        .result-summary {
+            margin-top: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(74, 108, 247, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .intro {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .intro h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .intro p {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Founder Psychometric Assessment</h1>
+            <p>Discover your entrepreneurial strengths and areas for growth</p>
+        </header>
+        
+        <div id="intro-screen" class="card intro">
+            <h2>Ready to understand your founder profile?</h2>
+            <p>This assessment consists of 10 questions based on validated psychometric frameworks. Your answers will help identify your strengths in areas like risk tolerance, decision-making, leadership style, and strategic thinking.</p>
+            <button id="start-btn" class="btn">Start Assessment</button>
+        </div>
+        
+        <div id="assessment-container" style="display: none;">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress" class="progress" style="width: 0%"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="current-question">0</span>
+                    <span>/ 10 questions</span>
+                </div>
+            </div>
+            
+            <div id="question-card" class="card">
+                <span id="category" class="category">Category</span>
+                <div id="question" class="question">Question will appear here</div>
+                <div id="choices" class="choices">
+                    <!-- Choices will be generated here -->
+                </div>
+                <div class="btn-container">
+                    <button id="next-btn" class="btn" disabled>Next</button>
+                </div>
+            </div>
+            
+            <div id="loader" class="loader">
+                <div class="spinner"></div>
+                <p>Loading next question...</p>
+            </div>
+        </div>
+        
+        <div id="results-container" class="card results">
+            <h2>Your Assessment Results</h2>
+            <div id="results-list">
+                <!-- Results will be generated here -->
+            </div>
+            <div class="result-summary">
+                <h3>Summary</h3>
+                <p id="result-summary-text">Based on your responses, you demonstrate strengths in strategic thinking and decision-making under uncertainty. Consider developing your leadership style and risk tolerance for greater entrepreneurial success.</p>
+            </div>
+            <div class="btn-container">
+                <button id="restart-btn" class="btn">Restart Assessment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock API for testing the UI
+        // Replace this with actual API calls to your Python backend
+        const mockApiData = [
+            {
+                question: "When faced with a critical business decision with incomplete information, how do you typically respond?",
+                category: "Decision-Making Under Uncertainty",
+                choices: [
+                    "Wait until all information is available before deciding",
+                    "Make a decision based on available data and adjust later if needed",
+                    "Rely primarily on intuition and past experience",
+                    "Seek consensus from team members or advisors"
+                ]
+            },
+            {
+                question: "How do you respond to business setbacks or failures?",
+                category: "Grit and Perseverance",
+                choices: [
+                    "Take time to recover emotionally before continuing",
+                    "Immediately analyze what went wrong and create a new plan",
+                    "Pivot to a completely different approach or opportunity",
+                    "See it as a learning opportunity and persist with renewed determination"
+                ]
+            },
+            {
+                question: "When developing business strategies, which approach best describes you?",
+                category: "Strategic Thinking",
+                choices: [
+                    "Focus on immediate tactical wins that show quick results",
+                    "Create detailed long-term plans with specific milestones",
+                    "Develop flexible frameworks that can adapt to changing conditions",
+                    "Prioritize competitive analysis and positioning against rivals"
+                ]
+            }
+        ];
+
+        // Application state
+        const state = {
+            currentQuestion: 0,
+            totalQuestions: 10,
+            answers: [],
+            results: {},
+            mockQuestionIndex: 0
+        };
+
+        // DOM elements
+        const introScreen = document.getElementById('intro-screen');
+        const assessmentContainer = document.getElementById('assessment-container');
+        const resultsContainer = document.getElementById('results-container');
+        const progressBar = document.getElementById('progress');
+        const currentQuestionEl = document.getElementById('current-question');
+        const categoryEl = document.getElementById('category');
+        const questionEl = document.getElementById('question');
+        const choicesEl = document.getElementById('choices');
+        const nextBtn = document.getElementById('next-btn');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const loaderEl = document.getElementById('loader');
+        const resultsListEl = document.getElementById('results-list');
+        const resultSummaryTextEl = document.getElementById('result-summary-text');
+
+        // Event listeners
+        startBtn.addEventListener('click', startAssessment);
+        nextBtn.addEventListener('click', handleNextQuestion);
+        restartBtn.addEventListener('click', restartAssessment);
+
+        // Initialize assessment
+        function startAssessment() {
+            introScreen.style.display = 'none';
+            assessmentContainer.style.display = 'block';
+            loadQuestion();
+        }
+
+        // Load question data
+        async function loadQuestion() {
+            // Show loader
+            document.getElementById('question-card').style.display = 'none';
+            loaderEl.style.display = 'block';
+            
+            try {
+                // In a real implementation, this would call your Python backend
+                // For now, we'll use mock data
+                await simulateApiCall();
+                
+                const data = getMockQuestionData();
+                
+                // Update UI with question data
+                categoryEl.textContent = data.category;
+                questionEl.textContent = data.question;
+                renderChoices(data.choices);
+                
+                // Update progress
+                state.currentQuestion++;
+                updateProgress();
+                
+                // Hide loader and show question
+                loaderEl.style.display = 'none';
+                document.getElementById('question-card').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading question:', error);
+                alert('There was an error loading the question. Please try again.');
+            }
+        }
+
+        // Mock API call - replace with real API in production
+        function simulateApiCall() {
+            return new Promise(resolve => {
+                setTimeout(resolve, 1000);
+            });
+        }
+
+        // Get mock question data - replace with real data in production
+        function getMockQuestionData() {
+            const data = mockApiData[state.mockQuestionIndex % mockApiData.length];
+            state.mockQuestionIndex++;
+            return data;
+        }
+
+        // Render choices for the current question
+        function renderChoices(choices) {
+            choicesEl.innerHTML = '';
+            choices.forEach((choice, index) => {
+                const choiceEl = document.createElement('div');
+                choiceEl.className = 'choice';
+                choiceEl.innerHTML = `<div class="choice-text">${choice}</div>`;
+                choiceEl.dataset.index = index;
+                choiceEl.addEventListener('click', handleChoiceSelection);
+                choicesEl.appendChild(choiceEl);
+            });
+            nextBtn.disabled = true;
+        }
+
+        // Handle choice selection
+        function handleChoiceSelection(e) {
+            // Clear previous selection
+            const choices = document.querySelectorAll('.choice');
+            choices.forEach(choice => choice.classList.remove('selected'));
+            
+            // Select current choice
+            const selectedChoice = e.currentTarget;
+            selectedChoice.classList.add('selected');
+            
+            // Enable next button
+            nextBtn.disabled = false;
+            
+            // Store selection
+            const choiceIndex = parseInt(selectedChoice.dataset.index);
+            const choiceText = selectedChoice.querySelector('.choice-text').textContent;
+            state.selectedAnswer = {
+                index: choiceIndex,
+                text: choiceText,
+                category: categoryEl.textContent
+            };
+        }
+
+        // Handle next question button click
+        function handleNextQuestion() {
+            // Save answer
+            state.answers.push(state.selectedAnswer);
+            
+            // Store result for the category
+            const category = state.selectedAnswer.category;
+            if (!state.results[category]) {
+                state.results[category] = [];
+            }
+            
+            // Mock scores - in production these would come from the API
+            state.results[category].push(Math.floor(Math.random() * 4) + 1);
+            
+            // Check if assessment is complete
+            if (state.currentQuestion >= state.totalQuestions) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = (state.currentQuestion / state.totalQuestions) * 100;
+            progressBar.style.width = `${progress}%`;
+            currentQuestionEl.textContent = state.currentQuestion;
+        }
+
+        // Show results
+        function showResults() {
+            assessmentContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            // Calculate results
+            const calculatedResults = calculateResults();
+            
+            // Render results
+            renderResults(calculatedResults);
+            
+            // Generate summary (this would be more sophisticated in production)
+            generateSummary(calculatedResults);
+        }
+
+        // Calculate final results
+        function calculateResults() {
+            const results = {};
+            
+            for (const category in state.results) {
+                const scores = state.results[category];
+                const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+                results[category] = parseFloat((average / 4 * 100).toFixed(1));
+            }
+            
+            return results;
+        }
+
+        // Render result bars
+        function renderResults(results) {
+            resultsListEl.innerHTML = '';
+            
+            for (const category in results) {
+                const score = results[category];
+                
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                
+                resultItem.innerHTML = `
+                    <div class="result-label">${category}</div>
+                    <div class="result-bar-container">
+                        <div class="result-bar" style="width: ${score}%"></div>
+                    </div>
+                    <div class="result-value">${score}%</div>
+                `;
+                
+                resultsListEl.appendChild(resultItem);
+            }
+        }
+
+        // Generate results summary
+        function generateSummary(results) {
+            // In production, this would be generated by your Python backend
+            // Here we're just creating a simple example
+            const categories = Object.keys(results);
+            const scores = Object.values(results);
+            
+            const highestScore = Math.max(...scores);
+            const lowestScore = Math.min(...scores);
+            
+            const highestCategory = categories[scores.indexOf(highestScore)];
+            const lowestCategory = categories[scores.indexOf(lowestScore)];
+            
+            resultSummaryTextEl.textContent = `Based on your responses, you demonstrate particular strength in ${highestCategory} (${highestScore}%). You might benefit from developing your capabilities in ${lowestCategory} (${lowestScore}%). Consider how these traits influence your entrepreneurial approach and decision-making.`;
+        }
+
+        // Restart assessment
+        function restartAssessment() {
+            // Reset state
+            state.currentQuestion = 0;
+            state.answers = [];
+            state.results = {};
+            state.mockQuestionIndex = 0;
+            
+            // Reset UI
+            resultsContainer.style.display = 'none';
+            introScreen.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
